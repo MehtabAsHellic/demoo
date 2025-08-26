@@ -5,41 +5,34 @@ import { Brain, Github, Twitter, Mail } from 'lucide-react';
 const LandingFooter: React.FC = () => {
   const footerLinks = {
     product: [
-      { name: 'Sandbox', href: '#sandbox' },
-      { name: 'Courses', href: '#courses' },
-      { name: 'Models', href: '/models' },
-      { name: 'Educators', href: '/educators' }
+      { name: 'Sandbox', href: '/sandbox' },
+      { name: 'Roadmap', href: '/roadmap' },
+      { name: 'Changelog', href: '/changelog' },
+      { name: 'Pricing', href: '/pricing' }
     ],
     resources: [
       { name: 'Documentation', href: '/docs' },
-      { name: 'Tutorials', href: '/tutorials' },
-      { name: 'Blog', href: '/blog' },
-      { name: 'Community', href: '/community' }
-    ],
-    company: [
-      { name: 'About', href: '/about' },
-      { name: 'Contact', href: '/contact' },
-      { name: 'Careers', href: '/careers' },
-      { name: 'Press', href: '/press' }
+      { name: 'API Reference', href: '/docs/api' },
+      { name: 'Examples', href: '/examples' },
+      { name: 'Status', href: '/status' }
     ],
     legal: [
       { name: 'Privacy', href: '/privacy' },
       { name: 'Terms', href: '/terms' },
-      { name: 'Cookies', href: '/cookies' },
-      { name: 'GDPR', href: '/gdpr' }
+      { name: 'Contact', href: '/contact' }
     ]
   };
 
   const socialLinks = [
-    { name: 'GitHub', icon: Github, href: 'https://github.com/neivs' },
-    { name: 'Twitter', icon: Twitter, href: 'https://twitter.com/neivs' },
-    { name: 'Email', icon: Mail, href: 'mailto:hello@neivs.com' }
+    { name: 'GitHub', icon: Github, href: 'https://github.com/neivs-ai' },
+    { name: 'Twitter', icon: Twitter, href: 'https://twitter.com/neivs_ai' },
+    { name: 'Email', icon: Mail, href: 'mailto:hello@neivs.ai' }
   ];
 
   return (
     <footer className="bg-slate-900 text-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-2 md:grid-cols-6 gap-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-8">
           {/* Brand Section */}
           <motion.div
             className="col-span-2 space-y-4"
@@ -49,13 +42,14 @@ const LandingFooter: React.FC = () => {
             transition={{ duration: 0.6 }}
           >
             <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center">
-                <Brain className="h-5 w-5 text-white" />
+              <Brain className="h-6 w-6 text-blue-400" />
+              <span className="text-lg font-semibold">NEI-VS</span>
+              <div className="bg-orange-600 text-white px-2 py-0.5 rounded-full text-xs font-medium">
+                Alpha
               </div>
-              <span className="text-xl font-semibold">NEI-VS</span>
             </div>
             <p className="text-slate-400 text-sm leading-relaxed max-w-md">
-              Making AI education accessible through interactive visualizations and hands-on learning.
+              Learn AI by doing—visually. Open source, privacy-first, and built for curious minds.
             </p>
             <div className="flex items-center space-x-4">
               {socialLinks.map((social) => (
@@ -103,27 +97,27 @@ const LandingFooter: React.FC = () => {
 
         {/* Bottom Section */}
         <motion.div
-          className="border-t border-slate-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0"
+          className="border-t border-slate-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.8 }}
         >
           <div className="text-sm text-slate-400">
-            © 2025 NEI-VS. Made with ❤️ for AI education.
+            © 2025 NEI-VS. Building in public for AI education.
           </div>
           
           <div className="flex items-center space-x-4">
-            <span className="text-slate-400 text-xs">Built with</span>
+            <span className="text-slate-400 text-xs">What's real today:</span>
             <div className="flex items-center space-x-2">
-              <div className="bg-slate-800 px-2 py-1 rounded text-xs font-medium text-slate-300">
-                React
+              <div className="bg-green-600 px-2 py-1 rounded text-xs font-medium">
+                Sandbox
               </div>
-              <div className="bg-slate-800 px-2 py-1 rounded text-xs font-medium text-slate-300">
-                Tailwind
+              <div className="bg-blue-600 px-2 py-1 rounded text-xs font-medium">
+                Auth
               </div>
-              <div className="bg-slate-800 px-2 py-1 rounded text-xs font-medium text-slate-300">
-                Framer Motion
+              <div className="bg-orange-600 px-2 py-1 rounded text-xs font-medium">
+                Gemini API
               </div>
             </div>
           </div>

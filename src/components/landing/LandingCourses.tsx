@@ -1,59 +1,78 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { ArrowRight, Clock, Users } from 'lucide-react';
-import { useAuthStore } from '../../store/useAuthStore';
+import { Clock, Users, Bell, ChevronRight } from 'lucide-react';
 
 const LandingCourses: React.FC = () => {
-  const { isAuthenticated, signInWithGoogle } = useAuthStore();
+  const [notifyEmails, setNotifyEmails] = React.useState<{[key: string]: string}>({});
+  const [votedTracks, setVotedTracks] = React.useState<Set<string>>(new Set());
 
-  const courses = [
+  const plannedTracks = [
     {
-      title: 'LLMs: Understand Transformers',
-      description: 'Deep dive into attention mechanisms and neural architectures',
-      duration: '2 hours',
-      students: '1.2k',
-      progress: 85,
-      color: 'indigo'
+      id: 'llm-fundamentals',
+      title: 'LLM Fundamentals',
+      description: 'Transformers, attention, and text generation',
+      estimatedDuration: '2-3 hours',
+      votes: 127,
+      priority: 'Next',
+      eta: 'Q2 2025'
     },
     {
-      title: 'Classical ML: Basics of SVMs',
-      description: 'Support Vector Machines and traditional machine learning',
-      duration: '90 min',
-      students: '2.1k',
-      progress: 92,
-      color: 'blue'
+      id: 'prompt-engineering',
+      title: 'Prompt Engineering',
+      description: 'Crafting effective prompts and system messages',
+      estimatedDuration: '90 minutes',
+      votes: 89,
+      priority: 'Planned',
+      eta: 'Q2 2025'
     },
     {
-      title: 'Computer Vision with CNNs',
-      description: 'Convolutional networks for image recognition',
-      duration: '3 hours',
-      students: '980',
-      progress: 78,
-      color: 'purple'
+      id: 'computer-vision',
+      title: 'Computer Vision Basics',
+      description: 'CNNs, image classification, and feature maps',
+      estimatedDuration: '3 hours',
+      votes: 64,
+      priority: 'Planned',
+      eta: 'Q3 2025'
     },
     {
-      title: 'Reinforcement Learning',
-      description: 'Training agents through reward systems',
-      duration: '4 hours',
-      students: '650',
-      progress: 65,
-      color: 'green'
+      id: 'classical-ml',
+      title: 'Classical ML Methods',
+      description: 'SVMs, decision trees, and ensemble methods',
+      estimatedDuration: '2 hours',
+      votes: 43,
+      priority: 'Considering',
+      eta: 'TBD'
     }
   ];
 
-  const handleStartCourse = async () => {
-    if (!isAuthenticated) {
-      try {
-        await signInWithGoogle();
-      } catch (error) {
-        console.error('Sign in failed:', error);
-      }
+  const handleVote = (trackId: string) => {
+    if (!votedTracks.has(trackId)) {
+      setVotedTracks(prev => new Set([...prev, trackId]));
+      // In real app, would send to backend
+    }
+  };
+
+  const handleNotifyMe = (trackId: string) => {
+    const email = notifyEmails[trackId];
+    if (email && email.includes('@')) {
+      // In real app, would send to backend
+      alert(`Thanks! We'll notify ${email} when ${plannedTracks.find(t => t.id === trackId)?.title} is ready.`);
+      setNotifyEmails(prev => ({ ...prev, [trackId]: '' }));
+    }
+  };
+
+  const getPriorityColor = (priority: string) => {
+    switch (priority) {
+      case 'Next': return 'bg-green-100 text-green-800';
+      case 'Planned': return 'bg-blue-100 text-blue-800';
+      case 'Considering': return 'bg-slate-100 text-slate-600';
+      default: return 'bg-slate-100 text-slate-600';
     }
   };
 
   return (
     <section className="py-16 bg-slate-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           className="text-center mb-16"
           initial={{ opacity: 0, y: 20 }}
@@ -64,67 +83,95 @@ const LandingCourses: React.FC = () => {
           <h2 className="text-3xl font-semibold text-slate-900 mb-4">
             Interactive Learning Tracks
           </h2>
-          <p className="text-xl text-slate-600 max-w-2xl mx-auto">
-            Master AI concepts with hands-on lessons and real-time visualizations.
+          <p className="text-xl text-slate-600 max-w-2xl mx-auto mb-6">
+            Structured courses are coming soon. Help us prioritize what to build next.
           </p>
+          
+          {/* Roadmap snippet */}
+          <div className="bg-white border border-slate-200 rounded-xl p-6 max-w-2xl mx-auto">
+            <div className="flex items-center space-x-2 mb-4">
+              <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+              <span className="text-sm font-medium text-slate-700">Public Roadmap</span>
+            </div>
+            <p className="text-sm text-slate-600 text-left">
+              We're building in public. Vote on tracks, get notified when they're ready, 
+              and help shape the curriculum based on real learning needs.
+            </p>
+          </div>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 gap-8 mb-12">
-          {courses.map((course, index) => (
+        <div className="grid md:grid-cols-2 gap-6 mb-12">
+          {plannedTracks.map((track, index) => (
             <motion.div
-              key={course.title}
-              className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 hover:shadow-lg transition-all duration-200"
+              key={track.id}
+              className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: index * 0.1 }}
-              whileHover={{ y: -4 }}
             >
               <div className="space-y-4">
                 <div className="flex items-start justify-between">
                   <div className="space-y-2">
-                    <h3 className="text-xl font-semibold text-slate-900">{course.title}</h3>
-                    <p className="text-slate-600">{course.description}</p>
+                    <div className="flex items-center space-x-2">
+                      <h3 className="text-xl font-semibold text-slate-900">{track.title}</h3>
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getPriorityColor(track.priority)}`}>
+                        {track.priority}
+                      </span>
+                    </div>
+                    <p className="text-slate-600">{track.description}</p>
                   </div>
-                  <div className={`w-3 h-3 bg-${course.color}-500 rounded-full`}></div>
                 </div>
 
                 <div className="flex items-center space-x-4 text-sm text-slate-500">
                   <div className="flex items-center space-x-1">
                     <Clock className="h-4 w-4" />
-                    <span>{course.duration}</span>
+                    <span>{track.estimatedDuration}</span>
                   </div>
                   <div className="flex items-center space-x-1">
                     <Users className="h-4 w-4" />
-                    <span>{course.students} students</span>
+                    <span>{track.votes} votes</span>
                   </div>
+                  <div className="text-slate-400">•</div>
+                  <span>ETA: {track.eta}</span>
                 </div>
 
-                <div className="space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-slate-600">Progress</span>
-                    <span className="text-slate-900 font-medium">{course.progress}%</span>
-                  </div>
-                  <div className="w-full bg-slate-200 rounded-full h-2">
-                    <motion.div
-                      className={`bg-${course.color}-500 h-2 rounded-full`}
-                      initial={{ width: 0 }}
-                      whileInView={{ width: `${course.progress}%` }}
-                      viewport={{ once: true }}
-                      transition={{ delay: 0.5 + index * 0.1, duration: 1 }}
+                {/* Vote & Notify */}
+                <div className="flex items-center space-x-3">
+                  <motion.button
+                    onClick={() => handleVote(track.id)}
+                    disabled={votedTracks.has(track.id)}
+                    className={`px-4 py-2 rounded-lg font-medium text-sm transition-all ${
+                      votedTracks.has(track.id)
+                        ? 'bg-green-100 text-green-800 cursor-not-allowed'
+                        : 'bg-blue-600 hover:bg-blue-700 text-white'
+                    }`}
+                    whileHover={!votedTracks.has(track.id) ? { scale: 1.02 } : {}}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    {votedTracks.has(track.id) ? '✓ Voted' : '👍 Vote'}
+                  </motion.button>
+
+                  <div className="flex-1 flex items-center space-x-2">
+                    <input
+                      type="email"
+                      placeholder="your@email.com"
+                      value={notifyEmails[track.id] || ''}
+                      onChange={(e) => setNotifyEmails(prev => ({ ...prev, [track.id]: e.target.value }))}
+                      className="flex-1 px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
+                    <motion.button
+                      onClick={() => handleNotifyMe(track.id)}
+                      disabled={!notifyEmails[track.id]?.includes('@')}
+                      className="px-3 py-2 bg-slate-100 hover:bg-slate-200 disabled:bg-slate-50 disabled:text-slate-400 text-slate-700 rounded-lg text-sm font-medium transition-all flex items-center space-x-1"
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      <Bell className="h-4 w-4" />
+                      <span>Notify</span>
+                    </motion.button>
                   </div>
                 </div>
-
-                <motion.button
-                  onClick={handleStartCourse}
-                  className={`w-full bg-${course.color}-600 hover:bg-${course.color}-700 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-200 flex items-center justify-center space-x-2`}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  <span>Start Course</span>
-                  <ArrowRight className="h-4 w-4" />
-                </motion.button>
               </div>
             </motion.div>
           ))}
@@ -137,9 +184,13 @@ const LandingCourses: React.FC = () => {
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.4 }}
         >
-          <button className="bg-white hover:bg-slate-50 text-slate-700 px-6 py-3 rounded-xl font-semibold border border-slate-200 transition-all duration-200">
-            View All Courses
-          </button>
+          <a
+            href="/roadmap"
+            className="inline-flex items-center space-x-2 bg-white hover:bg-slate-50 text-slate-700 px-6 py-3 rounded-xl font-semibold border border-slate-200 transition-all duration-200"
+          >
+            <span>View Full Roadmap</span>
+            <ChevronRight className="h-4 w-4" />
+          </a>
         </motion.div>
       </div>
     </section>

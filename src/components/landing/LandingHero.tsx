@@ -1,22 +1,45 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Play, ArrowRight, Zap } from 'lucide-react';
+import { Play, ArrowRight, Sparkles, ExternalLink } from 'lucide-react';
 import { useAuthStore } from '../../store/useAuthStore';
 
 const LandingHero: React.FC = () => {
   const { signInWithGoogle, isLoading } = useAuthStore();
-  const [tokenFlow, setTokenFlow] = React.useState<number[]>([]);
+  const [promptValue, setPromptValue] = React.useState('Explain how rainbows form');
+  const [isRunning, setIsRunning] = React.useState(false);
+  const [currentStep, setCurrentStep] = React.useState(0);
 
-  React.useEffect(() => {
-    const interval = setInterval(() => {
-      setTokenFlow(prev => {
-        const newFlow = Array.from({ length: 8 }, (_, i) => i);
-        return newFlow;
-      });
+  const pipelineSteps = [
+    { name: 'Tokenize', color: 'blue', duration: 800 },
+    { name: 'Embed', color: 'purple', duration: 600 },
+    { name: 'Attend', color: 'green', duration: 1000 },
+    { name: 'Generate', color: 'orange', duration: 1200 }
+  ];
+
+  const handleTrySandbox = () => {
+    // Navigate to sandbox without requiring auth
+    window.location.href = '/sandbox';
+  };
+
+  const handleRunMicroDemo = async () => {
+    if (!promptValue.trim()) return;
+    
+    setIsRunning(true);
+    setCurrentStep(0);
+    
+    // Animate through pipeline steps
+    for (let i = 0; i < pipelineSteps.length; i++) {
+      setCurrentStep(i);
+      await new Promise(resolve => setTimeout(resolve, pipelineSteps[i].duration));
+    }
+    
+    // Complete
+    setCurrentStep(pipelineSteps.length);
+    setTimeout(() => {
+      setIsRunning(false);
+      setCurrentStep(0);
     }, 2000);
-
-    return () => clearInterval(interval);
-  }, []);
+  };
 
   const handleSignIn = async () => {
     try {
@@ -26,17 +49,15 @@ const LandingHero: React.FC = () => {
     }
   };
 
-  const tokens = ['The', 'quick', 'brown', 'fox', 'jumps', 'over', 'the', 'lazy'];
-
   return (
     <section className="relative min-h-screen bg-white overflow-hidden">
       {/* Subtle background pattern */}
-      <div className="absolute inset-0 opacity-5">
-        <div className="absolute top-20 left-20 w-64 h-64 bg-indigo-300 rounded-full mix-blend-multiply filter blur-xl"></div>
-        <div className="absolute bottom-20 right-20 w-96 h-96 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl"></div>
+      <div className="absolute inset-0 opacity-3">
+        <div className="absolute top-20 left-20 w-64 h-64 bg-blue-100 rounded-full mix-blend-multiply filter blur-xl"></div>
+        <div className="absolute bottom-20 right-20 w-96 h-96 bg-purple-100 rounded-full mix-blend-multiply filter blur-xl"></div>
       </div>
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
+      <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
         <div className="grid lg:grid-cols-2 gap-16 items-center min-h-[80vh]">
           {/* Left Column - Content */}
           <motion.div
@@ -53,10 +74,10 @@ const LandingHero: React.FC = () => {
                 transition={{ delay: 0.2, duration: 0.8 }}
               >
                 Learn AI by{' '}
-                <span className="text-indigo-600">
-                  Doing
+                <span className="text-blue-600">
+                  Doing—Visually
                 </span>
-              </motion.h1>
+              </h1>
 
               <motion.p
                 className="text-xl text-slate-600 leading-relaxed max-w-lg"
@@ -64,7 +85,7 @@ const LandingHero: React.FC = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3, duration: 0.8 }}
               >
-                Explore LLMs with our interactive Sandbox—powered by Gemini.
+                Type a prompt and see the LLM pipeline—tokenization, embeddings, attention, generation—come alive.
               </motion.p>
             </div>
 
@@ -75,57 +96,58 @@ const LandingHero: React.FC = () => {
               transition={{ delay: 0.4, duration: 0.8 }}
             >
               <motion.button
-                onClick={handleSignIn}
-                disabled={isLoading}
-                className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-200 flex items-center justify-center space-x-3 shadow-lg hover:shadow-xl disabled:opacity-50"
-                whileHover={{ scale: 1.02, y: -2 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                {isLoading ? (
-                  <>
-                    <motion.div
-                      animate={{ rotate: 360 }}
-                      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                    >
-                      <Zap className="h-5 w-5" />
-                    </motion.div>
-                    <span>Signing In...</span>
-                  </>
-                ) : (
-                  <>
-                    <svg className="h-5 w-5" viewBox="0 0 24 24">
-                      <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                      <path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                      <path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                      <path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-                    </svg>
-                    <span>Sign In with Google</span>
-                  </>
-                )}
-              </motion.button>
-
-              <motion.button
-                className="border-2 border-slate-200 hover:border-slate-300 text-slate-700 px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-200 flex items-center justify-center space-x-2"
+                onClick={handleTrySandbox}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-200 flex items-center justify-center space-x-3 shadow-lg hover:shadow-xl"
                 whileHover={{ scale: 1.02, y: -2 }}
                 whileTap={{ scale: 0.98 }}
               >
                 <Play className="h-5 w-5" />
-                <span>Watch Demo</span>
+                <span>Try the Sandbox</span>
+                <span className="text-blue-200 text-sm">(no sign-in)</span>
               </motion.button>
+
+              <div className="flex items-center space-x-4 text-sm text-slate-600">
+                <button
+                  onClick={handleSignIn}
+                  disabled={isLoading}
+                  className="hover:text-blue-600 transition-colors underline"
+                >
+                  Sign in with Google
+                </button>
+                <span>•</span>
+                <a href="/changelog" className="hover:text-blue-600 transition-colors">
+                  Changelog
+                </a>
+              </div>
+            </motion.div>
+
+            {/* Proof row */}
+            <motion.div
+              className="flex items-center space-x-4 text-sm text-slate-500"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.6 }}
+            >
+              <div className="bg-orange-100 text-orange-700 px-2 py-1 rounded-full text-xs font-medium">
+                Alpha
+              </div>
+              <span>Built with React/Vite</span>
+              <span>•</span>
+              <span>Privacy-first</span>
             </motion.div>
           </motion.div>
 
-          {/* Right Column - AI Pipeline Visualization */}
+          {/* Right Column - Interactive Micro-Sandbox */}
           <motion.div
             className="relative"
             initial={{ opacity: 0, x: 30 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
           >
-            <div className="bg-white rounded-2xl shadow-2xl border border-slate-100 p-8">
+            <div className="bg-white rounded-2xl shadow-2xl border border-slate-100 p-6">
               <div className="space-y-6">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold text-slate-900">AI Pipeline</h3>
+                  <h3 className="text-lg font-semibold text-slate-900">Live Pipeline Demo</h3>
                   <div className="flex space-x-2">
                     <div className="w-3 h-3 bg-red-400 rounded-full"></div>
                     <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
@@ -133,62 +155,122 @@ const LandingHero: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Token Flow Visualization */}
-                <div className="space-y-4">
-                  <div className="text-sm text-slate-600">Input: "The quick brown fox..."</div>
+                {/* Prompt Input */}
+                <div className="space-y-3">
+                  <label className="text-sm font-medium text-slate-700">
+                    Try a prompt:
+                  </label>
+                  <textarea
+                    value={promptValue}
+                    onChange={(e) => setPromptValue(e.target.value)}
+                    placeholder="Ask anything..."
+                    className="w-full h-20 px-3 py-2 border border-slate-200 rounded-lg resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-sm"
+                    disabled={isRunning}
+                  />
                   
-                  <div className="flex flex-wrap gap-2">
-                    {tokens.map((token, index) => (
-                      <motion.div
-                        key={index}
-                        className="px-3 py-2 bg-indigo-50 text-indigo-700 rounded-lg text-sm font-medium"
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        animate={{ 
-                          opacity: tokenFlow.includes(index) ? 1 : 0.6,
-                          scale: tokenFlow.includes(index) ? 1.05 : 1,
-                          x: tokenFlow.includes(index) ? [0, 5, 0] : 0
-                        }}
-                        transition={{ 
-                          duration: 0.5,
-                          delay: index * 0.1
-                        }}
-                      >
-                        {token}
-                      </motion.div>
-                    ))}
-                  </div>
+                  <motion.button
+                    onClick={handleRunMicroDemo}
+                    disabled={!promptValue.trim() || isRunning}
+                    className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-slate-300 text-white px-4 py-2 rounded-lg font-medium transition-all flex items-center justify-center space-x-2"
+                    whileHover={{ scale: promptValue.trim() && !isRunning ? 1.02 : 1 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    {isRunning ? (
+                      <>
+                        <motion.div
+                          animate={{ rotate: 360 }}
+                          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                        >
+                          <Sparkles className="h-4 w-4" />
+                        </motion.div>
+                        <span>Processing...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Play className="h-4 w-4" />
+                        <span>Run Demo</span>
+                      </>
+                    )}
+                  </motion.button>
+                </div>
 
-                  {/* Pipeline Steps */}
-                  <div className="space-y-3 pt-4">
-                    {[
-                      { step: 'Tokenization', progress: 100, color: 'bg-blue-500' },
-                      { step: 'Embeddings', progress: 85, color: 'bg-purple-500' },
-                      { step: 'Attention', progress: 70, color: 'bg-green-500' },
-                      { step: 'Generation', progress: 45, color: 'bg-orange-500' }
-                    ].map((item, index) => (
-                      <motion.div
-                        key={item.step}
-                        className="space-y-2"
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.8 + index * 0.1 }}
-                      >
-                        <div className="flex justify-between text-sm">
-                          <span className="text-slate-700 font-medium">{item.step}</span>
-                          <span className="text-slate-500">{item.progress}%</span>
-                        </div>
-                        <div className="w-full bg-slate-200 rounded-full h-2">
+                {/* Pipeline Steps */}
+                <div className="space-y-3">
+                  <div className="text-sm font-medium text-slate-700">Pipeline:</div>
+                  
+                  <div className="flex items-center space-x-2">
+                    {pipelineSteps.map((step, index) => (
+                      <React.Fragment key={step.name}>
+                        <motion.div
+                          className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+                            currentStep === index && isRunning
+                              ? `bg-${step.color}-600 text-white shadow-lg`
+                              : currentStep > index && isRunning
+                              ? 'bg-green-100 text-green-800'
+                              : 'bg-slate-100 text-slate-600'
+                          }`}
+                          animate={currentStep === index && isRunning ? { 
+                            scale: [1, 1.05, 1],
+                            boxShadow: ['0 4px 6px -1px rgba(0, 0, 0, 0.1)', '0 10px 15px -3px rgba(0, 0, 0, 0.1)', '0 4px 6px -1px rgba(0, 0, 0, 0.1)']
+                          } : {}}
+                          transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                        >
+                          {step.name}
+                        </motion.div>
+                        
+                        {index < pipelineSteps.length - 1 && (
                           <motion.div
-                            className={`${item.color} h-2 rounded-full`}
-                            initial={{ width: 0 }}
-                            animate={{ width: `${item.progress}%` }}
-                            transition={{ delay: 1 + index * 0.2, duration: 1 }}
+                            className="w-4 h-0.5 bg-slate-300 rounded"
+                            animate={{
+                              backgroundColor: currentStep > index && isRunning ? '#10b981' : '#cbd5e1'
+                            }}
+                            transition={{ duration: 0.3 }}
                           />
-                        </div>
-                      </motion.div>
+                        )}
+                      </React.Fragment>
                     ))}
                   </div>
                 </div>
+
+                {/* Results */}
+                <div className="bg-slate-50 rounded-lg p-4">
+                  <div className="text-sm text-slate-600 mb-2">Output:</div>
+                  <div className="text-slate-900 text-sm min-h-[60px] flex items-center">
+                    {isRunning ? (
+                      <motion.span
+                        animate={{ opacity: [1, 0.5, 1] }}
+                        transition={{ duration: 1, repeat: Infinity }}
+                        className="text-slate-500"
+                      >
+                        {currentStep < pipelineSteps.length ? 
+                          `${pipelineSteps[currentStep]?.name}ing...` : 
+                          'Generating response...'
+                        }
+                      </motion.span>
+                    ) : currentStep === pipelineSteps.length ? (
+                      <motion.span
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="text-slate-700"
+                      >
+                        ✨ Response generated! Try the full sandbox for complete output.
+                      </motion.span>
+                    ) : (
+                      <span className="text-slate-400">Run a prompt to see the pipeline in action</span>
+                    )}
+                  </div>
+                </div>
+
+                {/* CTA to full sandbox */}
+                <motion.button
+                  onClick={handleTrySandbox}
+                  className="w-full border-2 border-blue-200 hover:border-blue-300 text-blue-700 px-4 py-2 rounded-lg font-medium transition-all flex items-center justify-center space-x-2"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <span>Open Full Sandbox</span>
+                  <ExternalLink className="h-4 w-4" />
+                </motion.button>
               </div>
             </div>
           </motion.div>
