@@ -1,26 +1,24 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { ArrowRight, Sparkles, Shield, Zap, ExternalLink } from 'lucide-react';
+import { ArrowRight, Sparkles, Shield, Zap } from 'lucide-react';
 import { useAuthStore } from '../../store/useAuthStore';
 
 const LandingCTA: React.FC = () => {
   const { signInWithGoogle, isLoading } = useAuthStore();
 
-  const handleTrySandbox = () => {
-    window.location.href = '/sandbox';
-  };
-
   const handleSignIn = async () => {
     try {
+      console.log('Starting Google Sign-In from CTA...');
       await signInWithGoogle();
     } catch (error) {
       console.error('Sign in failed:', error);
+      // Show user-friendly error message
       alert('Sign in failed. Please try again.');
     }
   };
 
   return (
-    <section className="py-20 bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700 relative overflow-hidden">
+    <section className="py-20 bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 relative overflow-hidden">
       {/* Background Animation */}
       <div className="absolute inset-0">
         <div className="absolute top-0 left-0 w-full h-full">
@@ -30,7 +28,7 @@ const LandingCTA: React.FC = () => {
         </div>
       </div>
 
-      <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <motion.div
           className="space-y-8"
           initial={{ opacity: 0, y: 30 }}
@@ -47,7 +45,7 @@ const LandingCTA: React.FC = () => {
               transition={{ delay: 0.2 }}
             >
               <Sparkles className="h-4 w-4" />
-              <span>Ready to explore AI?</span>
+              <span>Start Your AI Journey Today</span>
             </motion.div>
 
             <motion.h2
@@ -57,48 +55,38 @@ const LandingCTA: React.FC = () => {
               viewport={{ once: true }}
               transition={{ delay: 0.3 }}
             >
-              Start Learning{' '}
+              Ready to Explore AI?
+              <br />
               <span className="bg-gradient-to-r from-yellow-300 to-orange-300 bg-clip-text text-transparent">
-                Right Now
+                Sign Up Free
               </span>
             </motion.h2>
 
             <motion.p
-              className="text-xl text-white/90 max-w-2xl mx-auto leading-relaxed"
+              className="text-xl text-white/90 max-w-3xl mx-auto leading-relaxed"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.4 }}
             >
-              No waitlist, no complex setup. Jump into the sandbox and see how LLMs work—tokenization to generation—in real time.
+              Join thousands of learners discovering how AI works through hands-on experimentation. 
+              No credit card required, no complex setup—just pure learning.
             </motion.p>
           </div>
 
           <motion.div
-            className="flex flex-col sm:flex-row gap-4 justify-center items-center"
+            className="flex flex-col sm:flex-row gap-6 justify-center items-center"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.5 }}
           >
             <motion.button
-              onClick={handleTrySandbox}
-              className="group relative bg-white hover:bg-gray-50 text-gray-900 px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300 flex items-center space-x-3 shadow-2xl hover:shadow-3xl"
-              whileHover={{ scale: 1.05, y: -2 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <Play className="h-5 w-5" />
-              <span>Try the Sandbox</span>
-              <span className="text-gray-500 text-sm">(no sign-in)</span>
-              <ExternalLink className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
-            </motion.button>
-
-            <motion.button
               onClick={handleSignIn}
               disabled={isLoading}
-              className="group bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white px-6 py-4 rounded-xl font-semibold transition-all duration-300 flex items-center space-x-2 border border-white/20 disabled:opacity-50 disabled:cursor-not-allowed"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
+              className="group relative bg-white hover:bg-gray-50 text-gray-900 px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300 flex items-center space-x-3 shadow-2xl hover:shadow-3xl disabled:opacity-50 disabled:cursor-not-allowed"
+              whileHover={{ scale: 1.05, y: -2 }}
+              whileTap={{ scale: 0.95 }}
             >
               {isLoading ? (
                 <>
@@ -106,7 +94,7 @@ const LandingCTA: React.FC = () => {
                     animate={{ rotate: 360 }}
                     transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
                   >
-                    <Zap className="h-5 w-5" />
+                    <Zap className="h-5 w-5 text-indigo-600" />
                   </motion.div>
                   <span>Signing In...</span>
                 </>
@@ -119,46 +107,43 @@ const LandingCTA: React.FC = () => {
                     <path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
                   </svg>
                   <span>Sign In with Google</span>
+                  <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
                 </>
               )}
             </motion.button>
+
+            <div className="flex items-center space-x-6 text-white/80">
+              <div className="flex items-center space-x-2">
+                <Shield className="h-5 w-5" />
+                <span className="text-sm font-medium">Secure & Private</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Sparkles className="h-5 w-5" />
+                <span className="text-sm font-medium">Always Free</span>
+              </div>
+            </div>
           </motion.div>
 
+          {/* Trust Indicators */}
           <motion.div
-            className="flex items-center justify-center space-x-8 text-white/80"
+            className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-12"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.6 }}
           >
-            <div className="flex items-center space-x-2">
-              <Shield className="h-5 w-5" />
-              <span className="text-sm font-medium">Privacy-first</span>
+            <div className="text-center">
+              <div className="text-3xl font-bold text-white mb-2">10K+</div>
+              <div className="text-white/80 font-medium">Active Learners</div>
             </div>
-            <div className="flex items-center space-x-2">
-              <Sparkles className="h-5 w-5" />
-              <span className="text-sm font-medium">Free during Alpha</span>
+            <div className="text-center">
+              <div className="text-3xl font-bold text-white mb-2">50+</div>
+              <div className="text-white/80 font-medium">Universities</div>
             </div>
-            <div className="flex items-center space-x-2">
-              <Zap className="h-5 w-5" />
-              <span className="text-sm font-medium">No waitlist</span>
+            <div className="text-center">
+              <div className="text-3xl font-bold text-white mb-2">4.9★</div>
+              <div className="text-white/80 font-medium">User Rating</div>
             </div>
-          </motion.div>
-
-          {/* Privacy note */}
-          <motion.div
-            className="text-center text-white/70 text-sm max-w-lg mx-auto"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.8 }}
-          >
-            <p>
-              Your prompts are processed securely and are not used to train our models. 
-              <a href="/privacy" className="underline hover:text-white transition-colors ml-1">
-                Learn more about our privacy practices.
-              </a>
-            </p>
           </motion.div>
         </motion.div>
       </div>
