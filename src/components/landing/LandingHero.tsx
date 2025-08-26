@@ -56,7 +56,7 @@ const LandingHero: React.FC = () => {
                 <span className="text-indigo-600">
                   Doing
                 </span>
-              </h1>
+              </motion.h1>
 
               <motion.p
                 className="text-xl text-slate-600 leading-relaxed max-w-lg"
